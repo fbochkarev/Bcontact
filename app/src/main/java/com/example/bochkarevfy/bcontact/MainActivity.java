@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
 
     MyRecyclerViewAdapter adapter;
-    MyTask mt;
+    LoadInfo mt;
 
 
     @Override
@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mt = new MyTask();
+        mt = new LoadInfo();
         mt.execute();
 
         List<User> usersNames = null;
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         Toast.makeText(this, "You clicked " + adapter.getItem(position) + " on row number " + position, Toast.LENGTH_SHORT).show();
     }
 
-    class MyTask extends AsyncTask<Void, Void, List<User>> {
+    class LoadInfo extends AsyncTask<Void, Void, List<User>> {
 
         @Override
         protected void onPreExecute() {
@@ -67,14 +67,11 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
 
         @Override
         protected List<User> doInBackground(Void... params) {
-            String url = "http://nbics.net/VSM.Web.Plugins.Contacts/ContactsHome/GetContacts?email=tonitonytoni11@gmail.com&PasswordHash=5fa285e1bebe0a6623e33afc04a1fbd";
-            List<User> usersNames = new ArrayList<>();
+            List<User> users = new ArrayList<>();
 
-
-            URL obj = null;
             StringBuilder response = null;
             try {
-                obj = new URL(url);
+                URL obj = new URL(User.URL);
 
                 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 
@@ -99,15 +96,14 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
             User[] user = null;
             try {
                 user = gson.fromJson(response.toString(), User[].class);
-                User[] users = user;
             } catch (JsonSyntaxException e) {
                 e.printStackTrace();
             }
 
             for (User anUser : user) {
-                usersNames.add(new User(anUser.getFirstName(), anUser.getSurName(), anUser.getImage()));
+                users.add(new User(anUser.getFirstName(), anUser.getSurName(), anUser.getImage()));
             }
-            return usersNames;
+            return users;
         }
 
         @Override
